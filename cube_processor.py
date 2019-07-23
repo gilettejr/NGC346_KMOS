@@ -41,7 +41,7 @@ sns.set_context("paper")
 	
 	
 		
-		
+#function for checking uncombined observing block images
 	
 def check_single_image():
 	
@@ -52,8 +52,12 @@ def check_single_image():
 	#input at end of script allows user to terminate program
 	
 	while cont != 'no':
-		
+	
+		#initialise class
+	
 		star=cube_proc()
+		
+		#assign variables from class initialisaton
 		
 		star_name=star.star_name
 		band=star.band
@@ -74,11 +78,17 @@ def check_single_image():
 			
 			[image,cube] = star.collapse_into_image(i)
 			
+			#image list created
+			
 			image_list.append(image)
+		
+		#input to choose which image to view
 		
 		print('Which out of the '+str(len(image_list)) + ' images would you like to view?')
 		
 		x=input()
+		
+		#chosen figure plotted
 		
 		fig = plt.figure()
 		plt.imshow((image_list[int(x)-1]).value)
@@ -86,6 +96,8 @@ def check_single_image():
 
 
 		plt.show()
+		
+#function for checking images of combined data
 			
 def check_combined_image():
 			
@@ -97,14 +109,25 @@ def check_combined_image():
 	
 	while cont != 'no':
 		
+		#initialise class
+		
 		star=cube_proc()
+		
+		#variables assigned from class initialisation
 		
 		star_name=star.star_name
 		band=star.band
 		
+		#path to file set
+		
 		path=star.path_to_combined_file(star_name,band)
 		
+		
+		#function for creating image called
+		
 		[image,cube] = star.collapse_into_image(path)
+		
+		#image plotted
 		
 		fig=plt.figure()
 		plt.imshow(image.value)
@@ -240,7 +263,68 @@ def combine_and_plot():
 		#function to apply single gaussian fit applied. Limits for subregion containing BGamma line used.
 		
 		star.gaussian_fit(spectrum,2.162,2.172,star_name)
+
+def show_spectra():
+	
+
+	
+	#while loop so that user can continuously carry out the process on different stars without having to rerun the script
+	
+	cont = 'yes'
+	
+	#input at end of script allows user to terminate program
+	
+	while cont != 'no':
 		
+		#initialise class
+		
+		star=cube_proc()
+		
+		#variables set from class initialisation
+		
+		star_name=star.star_name
+		band=star.band
+		
+		#not necessary to work with K data, spectra created using combine_and_plot function
+		
+		if band!='K':
+			
+			#path to file found
+			
+			path=star.path_to_combined_file(star_name,band)
+			
+			#image created
+		
+			[image,cube] = star.collapse_into_image(path)
+			
+			#function for creating spectrum from selected stars called
+			
+			plotting_data=star.construct_spectrum(image,cube)
+			
+			#construct_spectrum returns masked cube object and background corrected spectrum object
+		
+			maskedcube=plotting_data[0]
+			correctedSp_Jy=plotting_data[1]
+			
+			#datasets assigned
+			
+			spectral_axis=maskedcube.spectral_axis
+			flux = correctedSp_Jy.value
+			
+			#spectrum plotted
+			
+			fig = plt.figure(figsize=(14,6))
+			plt.plot(spectral_axis,flux)
+			plt.title((star_name)+' spectrum, ' + band + ' Band')
+			plt.show()
+		
+		else:
+			
+			print('Nah, this does not work for K. Use 4 at the start')
+			
+			
+			
+#main function. Interactive input for choice of which function to use			
 		
 def main():
 	
@@ -248,17 +332,28 @@ def main():
 	
 	print('1: Check Images from Single Observing Blocks\n')
 	print('2: Check Images from Combined Observing Blocks\n')
-	print('3: Combine Single OB data into spectra and fit Gaussian to Bracket Gamma\n')
+	print('3: Check Combined Spectra from H and YJ bands\n')
+	print('4: Combine Single OB data into spectra and fit Gaussian to Bracket Gamma\n')
+	
 	
 	x=input()
 	
 	if x == '1':
+		
 		check_single_image()
 		
 	elif x=='2':
+		
 		check_combined_image()
 		
 	elif x=='3':
+		
+		show_spectra()
+		
+
+		
+	elif x=='4':
+		
 		combine_and_plot()
 		
 main()
