@@ -63,6 +63,7 @@ def make_bolometric(flux_list,band_nus):
 	
 	return lbol
 
+names = ['Y556(III)','Y553(NA)','Y545(NA)','Y544(I)','Y538(I)','Y535(NA)','Y532(I)']
 
 bandfluxes=np.array([[0,0,0,0.018,0.345,0.353,0.432,4.669,1.32,5.4,42.886,409.8],
 	[4.597,3.85,0.325,1.982,2.556,4.301,9.342,25.6,30.6,37.6,81.9,2048],
@@ -73,7 +74,6 @@ bandnus=const.c/bandlambdas
 bandnus=bandnus.to(u.Hz)
 bandfluxes=bandfluxes*u.mJy
 
-sns.set()
 
 
 #Y553 = make_bolometric(bandfluxes[0],bandnus)
@@ -93,29 +93,60 @@ y_data=np.array([0.13208818,0.35478809,0.09856949,0.95947881,0.01893723,2.099036
 
 
 #for i in line_lists:
-	
+
 	#y_data.append(flux_to_lum(i,210000))
+	
+locus1= x_data * np.exp(-6.6775)
+locus01= x_data*0.1 * np.exp(-6.6775)
+locus001 = x_data*0.01* np.exp(-6.6775)
+data={'L_bol':x_data,
+'L_Bgamma':y_data,
+'locus1':locus1,
+'locus0.1':locus01,
+'locus0.01':locus001,
+'Name':names}
+pdata = pd.DataFrame(data)
+sns.set()
+sns.lineplot(x='L_bol',y='locus1',data=pdata)
+sns.lineplot(x='L_bol',y='locus0.1',data=pdata)
+sns.lineplot(x='L_bol',y='locus0.01',data=pdata)
+splot = sns.scatterplot(x="L_bol", y="L_Bgamma",data=pdata)
+splot.set(xscale="log",yscale="log")
+axes=splot.axes
+axes.set_ylim(10E-3,10E1)
+axes.set_xlim(10E2,10E5)
+
+ax=plt.gca()
+
+for i in range(len(data['L_bol'])):
+	xoff=0.02
+	yoff=0
+	
+	ax.text(data['L_bol'][i] +xoff,data['L_Bgamma'][i]+yoff,data['Name'][i])
 
 
+
+#label_point(data['L_bol'], data['L_Bgamma'], data['Name'], plt.gca())
+
+
+plt.show()
 	
 print(y_data)
 print(x_data)
 
-locus1= x_data * np.exp(-6.6775)
-locus01= x_data*0.1 * np.exp(-6.6775)
-locus001 = x_data*0.01* np.exp(-6.6775)
 
-plt.scatter(x_data,y_data,label='KMOS data')
-plt.plot(x_data,locus1,label='Lacc=Lbol')
-plt.plot(x_data,locus01,label='Lacc=0.1Lbol')
-plt.plot(x_data,locus001,label='Lacc=0.01Lbol')
-plt.legend()
 
-plt.xlabel('Lbol/L_sun')
-plt.ylabel('Lbgamma/L_sun')
-plt.yscale('log')
-plt.xscale('log')
-plt.show()
+#plt.scatter(x_data,y_data,label='KMOS data')
+#plt.plot(x_data,locus1,label='Lacc=Lbol')
+#plt.plot(x_data,locus01,label='Lacc=0.1Lbol')
+#plt.plot(x_data,locus001,label='Lacc=0.01Lbol')
+#plt.legend()
+
+#plt.xlabel('Lbol/L_sun')
+#plt.ylabel('Lbgamma/L_sun')
+#plt.yscale('log')
+#plt.xscale('log')
+#plt.show()
 
 
 
