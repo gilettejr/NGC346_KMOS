@@ -159,6 +159,7 @@ def combine_and_plot():
 		#list for single spectra is initialised
 		
 		list_of_spectra=[]
+		list_of_unspectra=[]
 		
 		#loop for filling list with single spectra
 		
@@ -233,11 +234,13 @@ def combine_and_plot():
 			spectral_axis=(maskedcube.spectral_axis.value)
 			
 			
-			median_unspectra=[]
+			
 		
 		#reshaper used to trim spectra to prevent NAN blocks at either end, which return an error. Each star has a unique number of NAN blocks, so reshaper has to be dependent on star_name variable
 		
 		reshaper = 0
+		
+		median_unspectra=[]
 		
 		if star_name == 'Y535':
 			
@@ -265,7 +268,7 @@ def combine_and_plot():
 		
 		#median spectrum figure initialised
 			
-		fig = plt.figure(figsize=(14,6))
+		#fig = plt.figure(figsize=(14,6))
 		
 		#further reshaping required, again due to NAN blocks in positions which result in errors
 		
@@ -317,7 +320,7 @@ def combine_and_plot():
 	
 		
 		noise_region=SpectralRegion(2.26*u.um,2.3*u.um)
-		spectrum=noise_region_uncertainty(spectrum,noise_region)
+		#spectrum=noise_region_uncertainty(spectrum,noise_region)
 		uncmed=np.array(uncmed)
 		uncmed=uncmed *u.Jy
 		#unc = spectrum.uncertainty[0]
@@ -332,7 +335,7 @@ def combine_and_plot():
 		f.close()
 		
 		noise_region=SpectralRegion(2.26*u.um,2.3*u.um)
-		unspectrum=noise_region_uncertainty(unspectrum,noise_region)
+		#unspectrum=noise_region_uncertainty(unspectrum,noise_region)
 	
 		#unc = spectrum.uncertainty[0]
 		f=open(star_name+band+ '_uncorrected_spectrum.csv','a')
