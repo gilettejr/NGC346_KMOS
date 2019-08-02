@@ -74,25 +74,15 @@ class cube_proc:
 		
 		#looped if statements to retrieve the correct path depending on band
 		
-		for j in range(len(bands)):
+		if band=='H':
+			j=1
 			
-			if band == 'K':
-				
-				if j > 0 :
-					
-					break
-					
-			elif band == 'H':
-				
-				if j != 1:
-					
-					continue
-					
-			elif band == 'YJ':
-				
-				if j != 2:
-					
-					continue
+		elif band=='YJ':
+			j=2
+			
+		elif band == 'K':
+			j=0
+		
 			
 			#function output constructed from paths and filename from the loop
 		
@@ -430,6 +420,7 @@ class cube_proc:
 
 		# Convert flux from erg / (Angstrom cm2 s) to Jy 
 		correctedSp_Jy = correctedSp.to(u.Jansky, equivalencies=u.spectral_density(maskedcube.spectral_axis))
+		spectrum_Jy = spectrum.to(u.Jansky, equivalencies=u.spectral_density(maskedcube.spectral_axis))
 		noiseSp_Jy   = noisespectrum.to(u.Jansky, equivalencies=u.spectral_density(maskedcube.spectral_axis))
 
 		# Plot the spectrum extracted from cirular aperture in Jy
@@ -462,13 +453,13 @@ class cube_proc:
 		
 		#masked cube and background corrected spectrum in Janskys returned
 		
-		return[maskedcube,correctedSp_Jy]
+		return[maskedcube,correctedSp_Jy,spectrum_Jy]
 		
 	def gaussian_fit(self,spectrum,submin,submax,star_name):	
 		
 
-		#noise_region=SpectralRegion(2.26*u.um,2.3*u.um)
-		#spectrum=noise_region_uncertainty(spectrum,noise_region)
+		noise_region=SpectralRegion(2.26*u.um,2.3*u.um)
+		spectrum=noise_region_uncertainty(spectrum,noise_region)
 		#lines = find_lines_threshold(spectrum, noise_factor=4)
 		
 		#print(lines[lines['line_type'] == 'emission'])
